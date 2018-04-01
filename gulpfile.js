@@ -7,11 +7,35 @@ var path = require('path');
 var exec = require('child_process').exec;
 var portfinder = require('portfinder');
 var swaggerRepo = require('swagger-repo');
+const gulpSequence = require('gulp-sequence');
 
 var DIST_DIR = 'web_deploy';
 
-gulp.task('serve', ['build', 'watch', 'edit'], function() {
-  portfinder.getPort({port: 3000}, function (err, port) {
+// DO NOT CHANGE DEFAULT TASK - Azure depends on it
+gulp.task('default', false, defaultTask);
+
+function defaultTask(callback) {
+  gulpSequence('publish', callback);
+}
+
+gulp.task('publish', ['build'], function () {
+  portfinder.getPort({ port: 80 }, function (err, port) {
+    gulpConnect.server({
+      root: [DIST_DIR],
+      livereload: false,
+      port: port,
+      middleware: function (gulpConnect, opt) {
+        return [
+          cors()
+        ]
+      }
+    });
+  });
+});
+
+
+gulp.task('develop', ['build', 'watch', 'edit'], function () {
+  portfinder.getPort({ port: 3000 }, function (err, port) {
     gulpConnect.server({
       root: [DIST_DIR],
       livereload: true,
@@ -25,8 +49,8 @@ gulp.task('serve', ['build', 'watch', 'edit'], function() {
   });
 });
 
-gulp.task('edit', function() {
-  portfinder.getPort({port: 5000}, function (err, port) {
+gulp.task('edit', function () {
+  portfinder.getPort({ port: 5000 }, function (err, port) {
     var app = connect();
     app.use(swaggerRepo.swaggerEditorMiddleware());
     app.listen(port);
