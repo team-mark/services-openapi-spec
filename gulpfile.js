@@ -9,8 +9,12 @@ const portfinder = require('portfinder');
 const swaggerRepo = require('swagger-repo');
 const gulpSequence = require('gulp-sequence');
 const gulpNodemon = require('gulp-nodemon');
+const _G = require('gulp-load-plugins');
 
-var DIST_DIR = 'web_deploy';
+const DIST_DIR = 'web_deploy';
+const DEFAULT_DEBUG_SCOPE = 'mark-openapi:*'
+const project = require('./gulp-project.json');
+const { env: ENVIRONMENT } = require('./localconfig.json');
 
 // load settings
 const pkg = require('./package.json');
@@ -23,38 +27,30 @@ if (!pkg) {
 gulp.task('default', false, defaultTask);
 
 function defaultTask(callback) {
-  gulpSequence('publish', callback);
+  gulpSequence('debug', callback);
 }
 
-gulp.task('develop', ['build', 'watch', 'edit'], function () {
-  portfinder.getPort({ port: 3000 }, function (err, port) {
-    gulpConnect.server({
-      root: [DIST_DIR],
-      livereload: true,
-      port: port,
-      middleware: function (gulpConnect, opt) {
-        return [
-          cors()
-        ]
-      }
-    });
-  });
-});
+gulp.task('publish', ['build'], debugTask)
+gulp.task('debug', ['build'], debugTask)
+gulp.task('debug-all', ['build', 'edit'], debugTask)
 
-gulp.task('publish', ['build'], function () {
-  return portfinder.getPort({ port: 80 }, function (err, port) {
-    return gulpConnect.server({
-      root: [DIST_DIR],
-      livereload: true,
-      port: port,
-      middleware: function (gulpConnect, opt) {
-        return [
-          cors()
-        ]
-      }
-    });
-  });
-});
+function debugTask(debug, port) {
+  const debugScope = debug || ENVIRONMENT.DEBUG || DEFAULT_DEBUG_SCOPE;
+  const args = {
+    script: `index.js`,
+    ext: 'js',
+    env: ENVIRONMENT,
+    watch: project.watch,
+    ignore: project.ignore
+  };
+
+  if (port)
+    args.env.PORT = port;
+  args.env.DEBUG = debugScope;
+
+  util.log(util.colors.green('Mark OpenAPI docs starting http://localhost:' + args.env.PORT));
+  _G().nodemon(args);
+}
 
 gulp.task('edit', function () {
   portfinder.getPort({ port: 5000 }, function (err, port) {
@@ -64,6 +60,11 @@ gulp.task('edit', function () {
     util.log(util.colors.green('swagger-editor started http://localhost:' + port));
   });
 });
+
+gulp.task('install', [], installTask);
+function installTask() {
+  // install dependencies
+}
 
 gulp.task('build', function (callback) {
   exec('npm run build', function (err, stdout, stderr) {

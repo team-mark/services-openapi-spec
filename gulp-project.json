@@ -1,0 +1,12 @@
+{
+    "watch": [
+        "spec/swagger.yaml",
+        "scripts",
+        "web",
+        "index.js",
+        "app.js"
+    ],
+    "ignore": [
+        "web_deploy"
+    ]
+}
