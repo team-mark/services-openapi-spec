@@ -27,10 +27,10 @@ if (!pkg) {
 gulp.task('default', false, defaultTask);
 
 function defaultTask(callback) {
-  gulpSequence('debug', callback);
+  return gulpSequence('debug', callback);
 }
 
-gulp.task('publish', ['build'], debugTask)
+gulp.task('publish', ['build'])
 gulp.task('debug', ['build'], debugTask)
 gulp.task('debug-all', ['build', 'edit'], debugTask)
 
