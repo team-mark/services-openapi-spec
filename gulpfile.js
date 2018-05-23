@@ -14,7 +14,7 @@ const _G = require('gulp-load-plugins');
 const DIST_DIR = 'web_deploy';
 const DEFAULT_DEBUG_SCOPE = 'mark-openapi:*'
 const project = require('./gulp-project.json');
-const { env: ENVIRONMENT } = require('./localconfig.json');
+// const { env: ENVIRONMENT } = require('./localconfig.json');
 
 // load settings
 const pkg = require('./package.json');
@@ -35,11 +35,11 @@ gulp.task('debug', ['build'], debugTask)
 gulp.task('debug-all', ['build', 'edit'], debugTask)
 
 function debugTask(debug, port) {
-  const debugScope = debug || ENVIRONMENT.DEBUG || DEFAULT_DEBUG_SCOPE;
+  const debugScope = debug || DEFAULT_DEBUG_SCOPE;
   const args = {
     script: `index.js`,
     ext: 'js',
-    env: ENVIRONMENT,
+    env: {},
     watch: project.watch,
     ignore: project.ignore
   };
