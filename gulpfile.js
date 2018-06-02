@@ -9,12 +9,19 @@ const portfinder = require('portfinder');
 const swaggerRepo = require('swagger-repo');
 const gulpSequence = require('gulp-sequence');
 const gulpNodemon = require('gulp-nodemon');
+const fs = require('fs');
 const _G = require('gulp-load-plugins');
 
 const DIST_DIR = 'web_deploy';
 const DEFAULT_DEBUG_SCOPE = 'mark-openapi:*'
 const project = require('./gulp-project.json');
-// const { env: ENVIRONMENT } = require('./localconfig.json');
+
+const localconfigexists = fs.existsSync('./localconfig.json');
+let localconfig;
+if (localconfigexists) {
+  localconfig = require('./localconfig')['process.env'];
+}
+
 
 // load settings
 const pkg = require('./package.json');
@@ -39,10 +46,15 @@ function debugTask(debug, port) {
   const args = {
     script: `index.js`,
     ext: 'js',
-    env: {},
+    env: {
+    },
     watch: project.watch,
     ignore: project.ignore
   };
+
+  if (localconfigexists) {
+    Object.assign(args.env, localconfig);
+  }
 
   if (port)
     args.env.PORT = port;

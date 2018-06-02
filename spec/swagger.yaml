@@ -1,92 +1,91 @@
-tags:
-  - name: Marks
-    description: Operations which view/create/modify content on the Mark system.
-  - name: Tags
-    description: Operations used to view posts associated with hashtags.
-  - name: User Accounts
-    description: Operations associated with interacting with User accounts.
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://api.markweb.net/api/
+info:
+  version: "1.0.0"
+  title: Mark Services API
+  description: Communicate with the Mark Services project.
 paths:
   /marks:
     get:
-      summary: Returns an array of statuses
       tags:
         - Marks
+      description: Retrieve Marks
+      parameters:
+      - $ref: '#/components/parameters/ids'
+      - $ref: '#/components/parameters/query_limit'
+      - $ref: '#/components/parameters/next'
       responses:
         '200':
-          description: Successful retrieval of statuses
-          schema:
-            x-oad-type: array
-            type: array
-            description: List of statuses
-            items:
-              x-oad-type: object
-              type: object
-              title: Mark
-              description: Mark
-          x-oad-type: response
-      parameters:
-        - name: ids
-          in: query
-          description: List of status ids
-          required: false
-          type: string
-          x-oad-type: parameter
+          $ref: '#/components/responses/200-List-of-Marks'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      x-swagger-router-controller: Marks
     put:
-      summary: Revise mark
+      summary: Revise a Mark
       tags:
         - Marks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Revise-Mark'
       responses:
         '200':
           description: Post was made successfully
-          x-oad-type: response
         '400':
-          description: There was an error submitting the post
-          schema:
-            x-oad-type: object
-            type: object
-            description: Error respones
-            properties:
-              error:
-                x-oad-type: string
-                type: string
-                description: Error field describes the nature of the error
-                enum:
-                  - bad_revision
-                  - unprocessable_entity
-          x-oad-type: response
-      parameters:
-        - name: revision
-          in: body
-          required: false
-          schema:
-            x-oad-type: string
-            type: string
-            description: Mark transaction ID to revise
-          x-oad-type: parameter
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      x-swagger-router-controller: Marks
     post:
-      summary: Post new mark
+      summary: Post a new Mark
       tags:
         - Marks
       responses:
         '200':
           description: Post was made successfully
-          x-oad-type: response
         '400':
-          description: There was an error submitting the post
-          schema:
-            x-oad-type: object
-            type: object
-            description: Error respones
-            properties:
-              error:
-                x-oad-type: string
-                type: string
-                description: Error field describes the nature of the error
-                enum:
-                  - bad_revision
-                  - unprocessable_entity
-          x-oad-type: response
-    x-oad-type: operation
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post-Mark'
+    parameters:
+    - $ref: '#/components/parameters/Content-Type'
+    - $ref: '#/components/parameters/Authorization'
+    x-swagger-router-controller: Marks
   '/marks/:tag':
     get:
       summary: Retrieve Marks associated with a tag
@@ -98,39 +97,108 @@ paths:
         - Tags
       responses:
         '200':
-          description: List of Marks
-          schema:
-            x-oad-type: array
-            type: array
-            description: List of Mark items
-            items:
-              x-oad-type: object
-              type: object
-              title: Mark
-              description: Mark
-          x-oad-type: response
-    x-oad-type: operation
-  '/users/:handle':
-    x-oad-type: operation
-  '/users/:handle/marks/:transactionId':
-    x-oad-type: operation
-  /account/login:
+          $ref: '#/components/responses/200-List-of-Marks'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      parameters:
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/query_limit'
+        - $ref: '#/components/parameters/next'
+    parameters:
+    - $ref: '#/components/parameters/Content-Type'
+    - $ref: '#/components/parameters/Authorization'
+        
+    x-swagger-router-controller: Marks
+  '/users/:handle/marks':
     get:
+      summary: Retrieve Marks by user handle.
+      tags:
+        - Marks
+        - User Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/200-List-of-Marks'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      parameters:
+        - $ref: '#/components/parameters/handle'
+        - $ref: '#/components/parameters/query_limit'
+        - $ref: '#/components/parameters/next'
+    parameters:
+    - $ref: '#/components/parameters/Content-Type'
+    - $ref: '#/components/parameters/Authorization'
+    
+  '/users/:handle/marks/:id':
+    get:
+      summary: Retrieve a single Mark by a specified user.
+      tags:
+        - Marks
+      responses:
+        '200':
+          $ref: '#/components/responses/200-Single-Mark'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      parameters:
+        - $ref: '#/components/parameters/handle'
+        - $ref: '#/components/parameters/id'
+    parameters:
+    - $ref: '#/components/parameters/Content-Type'
+    - $ref: '#/components/parameters/Authorization'
+  /account/login:
+    post:
       summary: Allows a user to log into the Mark system
       description: Allows a user to log into the Mark system.
       tags:
         - User Accounts
       responses:
         '200':
-          description: Successful authentication
-          schema:
-            x-oad-type: string
-            type: string
-            title: token
-            description: A user token that will allow the user to create/modify content created by the respective token owner on the platform.
-          x-oad-type: response
-    x-oad-type: operation
-  /account/handle-availability:
+          $ref: '#/components/responses/200-Successful-Authorization'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+  /account/check-handle-availability:
     get:
       summary: Check is user handle is available.
       description: Check to see if a user handle is available.
@@ -138,158 +206,568 @@ paths:
         - User Accounts
       responses:
         '200':
-          description: Handle is available
-          x-oad-type: response
+          $ref: '#/components/responses/200-Handle-Available'
         '400':
-          description: Handle is unavailable
-          schema:
-            x-oad-type: string
-            type: string
-            title: Error
-            enum:
-              - invalid_handle
-              - not_available
-          x-oad-type: response
+          $ref: '#/components/responses/400-Bad-Request'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
       parameters:
-        - name: handle
-          in: query
-          description: Handle the user has entered for the signup process.
-          required: true
-          type: string
-          x-oad-type: parameter
-    x-oad-type: operation
+        - $ref: '#/components/parameters/handle'
   /account/signup:
-    get:
+    post:
       summary: Start of the signup process.
-      description: 'The start of the signup process.Returns a code, roll, and hashed key. Perform another hash on the hashed key and return the roll and the state, along with the texted code in the signup-validate step. '
+      description: >-
+        The start of the signup process.Returns a code, roll, and hashed key.
+        Perform another hash on the hashed key and return the roll and the
+        state, along with the texted code in the signup-validate step.
       tags:
         - User Accounts
       responses:
         '200':
-          description: Successful signup attempt.
+          $ref: '#/components/responses/200-Successful-Signup'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+  /account/signup-validate:
+    post:
+      summary: Validate the user hardware identity
+      description: >-
+        Validate that a user is in posession of the phone which they claim to
+        own.
+      tags:
+        - User Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/200-Identity-Validation'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup-Validate'
+
+  '/users/:handle':
+    get:
+      summary: Get user information
+      tags:
+        - User Accounts
+      responses:
+        '200':
+          $ref: '#/components/responses/200-Single-Account'
+        '400':
+          $ref: '#/components/responses/400-Bad-Request'
+        '401':
+          $ref: '#/components/responses/401-Unauthorized'
+        '403':
+          $ref: '#/components/responses/403-Forbidden'
+        '422':
+          $ref: '#/components/responses/422-Unprocessable-Entity'
+        '429':
+          $ref: '#/components/responses/429-Too-Many-Requests'
+        '500':
+          $ref: '#/components/responses/500-Server-Error'
+      parameters:
+        - $ref: '#/components/parameters/handle'
+components:
+  parameters:
+    Content-Type:
+      name: Content-Type
+      in: header
+      required: true
+      schema: 
+        type: string
+        enum:
+          - application/json
+    Authorization:
+      name: Authorization
+      in: header
+      description: User access token.
+      required: true
+      schema: 
+        type: string
+    id:
+      name: id
+      in: path
+      description: Mark ID.
+      required: true
+      schema: 
+        type: string
+    ids:
+      name: ids
+      in: query
+      description: >-
+        Request for specific IDs.
+        Can be left out to query for all most recent without specifying specific
+        IDs.
+      required: false
+      schema: 
+        type: string
+    handle:
+      name: handle
+      in: path
+      required: true
+      schema:
+        type: string
+    tag:
+      name: tag
+      in: path
+      required: true
+      schema:
+        type: string
+    query_limit:
+      name: limit
+      in: query
+      description: Query page limit
+      required: false
+      schema:
+        type: string
+    next:
+      name: next
+      in: query
+      schema:
+        type: string
+  responses:
+    200-Handle-Available:
+      description: Handle is available
+      # content:
+      #   application/json:
+      #     schema:
+      #       type: null
+    200-Successful-Signup:
+      description: Successful signup attempt.
+      content:
+        application/json:
           schema:
-            x-oad-type: object
             type: object
             properties:
-              state:
-                x-oad-type: string
-                type: string
-                title: state
-                description: State of transaction.
               roll:
-                x-oad-type: integer
-                type: integer
-                title: Roll
-                description: Roll number
-                format: int32
+                $ref: '#/components/schemas/roll'
+              state:
+                $ref: '#/components/schemas/state'
               key:
-                x-oad-type: string
-                type: string
-                title: key
-                description: A hashed key.
-          x-oad-type: response
-    x-oad-type: operation
-  /account/signup-validate:
-    get:
-      summary: Validate the user hardware identity
-      description: Validate that a user is in posession of the phone which they claim to own.
-      tags:
-        - User Accounts
-      responses:
-        '200':
-          description: Successful identity validation
+                $ref: '#/components/schemas/key'
+    200-Identity-Validation:
+      description: Successful identity verification.
+      content:
+        application/json:
           schema:
-            x-oad-type: string
-            type: string
+            type: object
             title: token
-            description: A user token that will allow the user to create/modify content created by the respective token owner on the platform.
-            default: dG9rZW4xMjNhc2RmZ2hqa2xxd2VydHl1aW9w
-          x-oad-type: response
-      parameters:
-        - name: code
-          in: body
-          description: Code texted to user.
-          required: true
+            description: >-
+              A user token that will allow the user to create/modify content
+              created by the respective token owner on the platform.
+            properties:
+              token:
+                type: string
+                title: token
+                description: >-
+                  A user token that will allow the user to create/modify content
+                  created by the respective token owner on the platform.
+                  
+                
+    200-List-of-Marks:
+      description: List of Marks
+      content:
+        application/json:
           schema:
-            x-oad-type: 'null'
-            type: 'null'
-          x-oad-type: parameter
-        - name: state
-          in: path
-          required: true
+            type: object
+            title: Response body
+            description: Marks and next.
+            properties:
+              items:
+                type: array
+                title: items
+                description: List of Marks
+                items:
+                  $ref: '#/components/schemas/Mark'
+              next:
+                $ref: '#/components/schemas/next'
+                
+    200-Single-Mark:
+      description: Single Mark item
+      content:
+        application/json:
+          schema:
+            type: object
+            title: Response body
+            description: Marks and next.
+            properties:
+              items:
+                type: array
+                title: items
+                description: List of Marks
+                items:
+                  $ref: '#/components/schemas/Mark'
+              next:
+                $ref: '#/components/schemas/next'
+                
+    200-Successful-Authorization:
+      description: Successful authorization
+      content:
+        application/json:
+          schema:
+            type: object
+            title: 200-Successful-Authorization
+            description: 200-Successful-Authorization
+            properties:
+              token:
+                $ref: '#/components/schemas/user_token'
+                
+    200-Single-Account:
+      description: Account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Account'
+            
+    400-Bad-Request:
+      description: >-
+        There was an issue processing the request because one of the endpoint
+        requirements was not met.
+      content:
+        application/json:
+          schema:
+            type: object
+            title: Bad Request
+            description: >-
+              There was an issue processing the request because one of the endpoint
+              requirements was not met.
+            properties:
+              error:
+                type: string
+                title: Error Name
+                description: Name of error
+                enum:
+                  - handle_unavailable
+                  - bad_request
+              error_description:
+                type: string
+                title: Error Description
+                description: Detailed error description
+    401-Unauthorized:
+      description: >-
+        There was an issue processing the request because the requestee is not
+        authorized to view the content.
+        content:
+          application/json:
+            schema:
+              type: 'null'
+              title: 401-Unauthorized
+              description: >-
+                There was an issue processing the request because the requestee is not
+                authorized to view the content.
+    403-Forbidden:
+      description: >-
+        HTTP 403 is an HTTP status code that indicates that the server that the
+        client is attempting to communicate with understood the request, but will
+        not fulfill it for a reason other than authorization.
+      content:
+        application/json:
+          schema:
+            # type: 'null'
+            title: 403-Forbidden
+            # description: >-
+            #   HTTP 403 is an HTTP status code that indicates that the server that the
+            #   client is attempting to communicate with understood the request, but
+            #   will not fulfill it for a reason other than authorization.
+    422-Unprocessable-Entity:
+      description: >-
+        The request was well-formed but was unable to be followed due to semantic
+        errors.
+      content:
+        application/json:
+          schema:
+            # type: 'null'
+            title: 422-Unprocessable-Entity
+            description: >-
+              The request was well-formed but was unable to be followed due to
+              semantic errors.
+    429-Too-Many-Requests:
+      description: The client or user has sent too many requests in a given amount of time.
+      content:
+        application/json:
+          schema:
+            # type: 'null'
+            title: 429-Too-Many-Requests
+            description: The client or user has sent too many requests in a given amount of time.
+    500-Server-Error:
+      description: >-
+        A generic error message, given when an unexpected condition was
+        encountered and no more specific message is suitable.
+      content:
+        application/json:
+          schema:
+            type: object
+            title: 500-Server-Error
+            description: >-
+              A generic error message, given when an unexpected condition was
+              encountered and no more specific message is suitable.
+            properties:
+              error:
+                type: string
+                title: Error
+                enum:
+                  - server_error
+              error_description:
+                type: string
+                title: Error Description
+
+  schemas:
+    Mark:
+      type: object
+      title: Mark
+      description: Mark post data
+      properties:
+        id:
           type: string
-          x-oad-type: parameter
-        - name: roll
-          in: path
-          required: true
-          type: integer
-          format: int32
-          x-oad-type: parameter
-        - name: key
-          in: path
-          required: true
+          description: Transaction id
+          # $ref: '#/components/schemas/id' 
+        owner:
           type: string
-          x-oad-type: parameter
-    x-oad-type: operation
-definitions:
-  Mark:
-    x-oad-type: object
-    type: object
-    title: Mark
-    description: Mark post data
-    properties:
-      id:
-        x-oad-type: string
-        type: string
-        description: Transaction id
-      owner:
-        x-oad-type: string
-        type: string
-        description: Owner handle
-      ownerId:
-        x-oad-type: string
-        type: string
-        description: Owner wallet ID
-      body:
-        x-oad-type: string
-        type: string
-        description: Post text corpus
-      tags:
-        x-oad-type: array
-        type: array
-        description: List of tags in text corpus
-        items:
-          x-oad-type: string
+          description: Owner handle
+        ownerId:
           type: string
-          description: Tag in corpus
-      location:
-        x-oad-type: string
-        type: string
-        description: |-
-          base64 encoded gps coordinates
-          shema: b64(latitude:longitude)
-securityDefinitions:
-  Authorization:
-    description: User authentication token
-    name: User Token
-    in: header
-    type: apiKey
-info:
-  title: Mark Services API
-  version: 1.0.0
-  description: Communicate with the Mark Services project
-  contact:
-    name: Jake Ferrante
-    email: ferrantej@knights.ucf.edu
-  license:
-    name: MIT
-    url: 'https://mit-license.org'
-host: mark-services.azurewebsites.net
-basePath: /api/v1
-schemes:
-  - https
-consumes:
-  - application/json
-produces:
-  - application/json
-swagger: '2.0'
+          description: Owner wallet ID
+        body:
+          type: string
+          description: Post text corpus
+        tags:
+          type: array
+          description: List of tags in text corpus
+          items:
+            type: string
+            description: Tag in corpus
+        location:
+          type: string
+          description: |-
+            base64 encoded gps coordinates
+            shema: b64(latitude:longitude)
+    Account:
+      type: object
+      title: Account
+      description: Account information
+      properties:
+        username:
+          type: string
+          title: username
+          description: Account username
+          readOnly: true
+        followers:
+          type: array
+          title: friends
+          items:
+            type: string
+            title: follower IDs
+        following:
+          type: array
+          title: following
+          items:
+            type: string
+            title: following IDs
+    next:
+      type: string
+      # title: next
+      description: >-
+        A direct link URL which is able to request the next set of Marks per the
+        original  query params.
+        readOnly: true
+    user_token:
+      type: string
+      title: token
+      description: User token
+      readOnly: true
+
+### Body Parameters ###
+    content:
+      title: content
+      type: string
+    revision_number:
+      title: revision_number
+      description: >-
+        Mark Revision-Number.
+
+        The ID of the Mark to be revised.
+
+        e.g. If Mark `amFrZSB3YXMgaGVyZSB0b2tlbiB0b2tlbiB0b2tlbiB0b2tlbiA=` were
+        being revised, the Revision-Number would be
+        `amFrZSB3YXMgaGVyZSB0b2tlbiB0b2tlbiB0b2tlbiB0b2tlbiA=`.
+      type: string
+    timestamp:
+      type: string
+      format: date
+    key:
+      type: string
+    roll:
+      type: integer
+      format: int32    
+    state:
+      type: integer
+      format: int32    
+    code:
+      type: integer
+      format: int32
+    handle:
+      type: string    
+    phone:
+      type: string
+
+### Start Request Bodies ###
+
+    Revise-Mark:
+      type: object
+      required:
+      - revision_number
+      - content
+      - timestamp
+      - key
+      properties:
+        revision_number:
+          $ref: '#/components/schemas/revision_number'
+        content:
+          $ref: '#/components/schemas/content'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+        key:
+          $ref: '#/components/schemas/key'
+
+    Post-Mark:
+      type: object
+      required:
+      - key
+      - content
+      - timestamp
+      properties:
+        key: 
+          $ref: '#/components/schemas/key'
+        content:
+          $ref: '#/components/schemas/content'
+        timestamp:
+          $ref: '#/components/schemas/timestamp'
+
+    Signup:
+      type: object
+      required:
+      - key
+      - roll
+      - state
+      properties:
+        key: 
+          $ref: '#/components/schemas/key'
+        roll:
+          $ref: '#/components/schemas/roll'
+        state:
+          $ref: '#/components/schemas/state'
+          
+    Signup-Validate:
+      type: object
+      required:
+      - code
+      - key
+      - roll
+      - state
+      properties:
+        code: 
+          $ref: '#/components/schemas/code'
+        key: 
+          $ref: '#/components/schemas/key'
+        roll:
+          $ref: '#/components/schemas/roll'
+        state:
+          $ref: '#/components/schemas/state'
+
+    Login:
+      type: object
+      required:
+      - key
+      - handle
+      properties:
+        key: 
+          $ref: '#/components/schemas/key'
+        handle:
+          $ref: '#/components/schemas/handle'
+          
+    # Handle-Availability:
+    #   type: object
+    #   required:
+    #   - handle
+    #   properties:
+    #     handle:
+    #       $ref: '#/components/schemas/handle'
+          
+### End Request Bodies ###
+
+
+### Start Response Bodies ###
+### End Response Bodies ###
+
+  securitySchemes:
+    apiKey:
+      name: APIKey
+      in: header
+      type: apiKey
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      ### EOF ###
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
